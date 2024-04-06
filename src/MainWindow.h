@@ -12,6 +12,7 @@ public:
 
 private slots:
     void renameFiles();
+    void replaceTexts();
 
 private:
     SearchWidget *_searchWidget{nullptr};

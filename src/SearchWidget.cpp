@@ -54,9 +54,9 @@ SearchWidget::SearchWidget(QWidget *parent) : QWidget(parent)
         _textReplaceEdit = new QLineEdit(this);
         l->addWidget(_textReplaceEdit, 7, 1);
 
-        auto replaceButton = new QPushButton("Replace Text", this);
+        auto replaceButton = new QPushButton("Replace Files", this);
         l->addWidget(replaceButton, 8, 1);
-        connect(replaceButton, &QPushButton::clicked, this, &SearchWidget::doRenameFiles);
+        connect(replaceButton, &QPushButton::clicked, this, &SearchWidget::doReplaceTexts);
     }
 
     l->addItem(new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding), 9, 0);

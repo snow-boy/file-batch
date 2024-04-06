@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFile>
 
+#include "IFileProcessor.h"
 #include "LogWidget.h"
 
 MainWindow::MainWindow()
@@ -32,6 +33,7 @@ MainWindow::MainWindow()
 
     connect(_searchWidget, &SearchWidget::filterChanged, _model, &EverythingModel::setFilter);
     connect(_searchWidget, &SearchWidget::doRenameFiles, this, &MainWindow::renameFiles);
+    connect(_searchWidget, &SearchWidget::doReplaceTexts, this, &MainWindow::replaceTexts);
 }
 
 MainWindow::~MainWindow()
@@ -85,4 +87,59 @@ void MainWindow::renameFiles()
                         QMetaObject::invokeMethod(this, [this]
                                                   { _searchWidget->setEnabled(true); 
                                                   _model->setFilter(_searchWidget->filter()); }); });
+}
+
+void MainWindow::replaceTexts()
+{
+    _searchWidget->setEnabled(false);
+
+    QStringList fileList;
+    auto match = _searchWidget->textMatch();
+    auto replace = _searchWidget->textReplace();
+
+    {
+        auto rowCount = _model->rowCount();
+
+        for (int i = 0; i < rowCount; ++i)
+        {
+            auto fileName = _model->data(_model->index(i, 0)).toString();
+            auto filePath = _model->data(_model->index(i, 1)).toString();
+            auto file = QDir(filePath).absoluteFilePath(fileName);
+            if (!QFileInfo(file).isFile())
+            {
+                continue;
+            }
+
+            fileList << file;
+        }
+    }
+
+    qInfo().noquote() << QString("Replacing %1 files matching '%2' to '%3'").arg(fileList.size()).arg(match).arg(replace);
+    QtConcurrent::run([this, fileList, match, replace]
+                      {
+        for (auto &file : fileList)
+        {
+            if (!QFileInfo(file).isFile()) {
+                continue;
+            }
+
+            auto processor = IFileProcessor::get(QFileInfo(file).suffix());
+            if (!processor)
+            {
+                qInfo().noquote() << "No processor found for" << QStringLiteral("<%1>").arg(file);
+                continue;
+            }
+
+            qInfo().noquote() << "Replacing" << QStringLiteral("<%1>").arg(file);
+            if (processor->replace(file, match, replace)) {
+                qInfo().noquote() << "Done";
+            }
+            else {
+                qWarning().noquote() << "Failed";
+            }
+        }
+
+        qInfo().noquote() << "Replacing complete";
+        QMetaObject::invokeMethod(this, [this]
+                                  { _searchWidget->setEnabled(true); }); });
 }
