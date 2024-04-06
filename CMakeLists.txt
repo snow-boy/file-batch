@@ -14,4 +14,18 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-add_subdirectory(src)
+file(GLOB_RECURSE SOURCES_LIST
+    src/*.h
+    src/*.cpp
+)
+
+add_executable(file_batch ${SOURCES_LIST})
+
+find_package(Qt5 COMPONENTS Widgets Concurrent REQUIRED)
+find_package(everything_sdk REQUIRED)
+
+target_link_libraries(file_batch 
+    Qt5::Widgets
+    Qt5::Concurrent
+    everything_sdk  
+)
