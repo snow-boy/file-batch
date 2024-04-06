@@ -85,8 +85,11 @@ void MainWindow::renameFiles()
                         
                         qInfo().noquote() << "Renaming complete";
                         QMetaObject::invokeMethod(this, [this]
-                                                  { _searchWidget->setEnabled(true); 
-                                                  _model->setFilter(_searchWidget->filter()); }); });
+                                                  {
+                                                      _searchWidget->setEnabled(true);
+                                                      QTimer::singleShot(1000, this, [this]
+                                                                         { _model->setFilter(_searchWidget->filter()); });
+                                                  }); });
 }
 
 void MainWindow::replaceTexts()

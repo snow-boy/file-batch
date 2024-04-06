@@ -14,4 +14,10 @@ target_include_directories(everything_sdk
 
 install(FILES 
     ${SDK_PATH}/bin/Everything64.dll 
-    DESTINATION ${CMAKE_BINARY_DIR}/$<CONFIG>/bin)
+    CONFIGURATIONS Debug
+    DESTINATION ${CMAKE_BINARY_DIR}/Debug/bin)
+
+install(FILES 
+    ${SDK_PATH}/bin/Everything64.dll 
+    CONFIGURATIONS Release
+    DESTINATION ${CMAKE_SOURCE_DIR}/bin)

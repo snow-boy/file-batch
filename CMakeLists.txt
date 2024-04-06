@@ -19,7 +19,7 @@ file(GLOB_RECURSE SOURCES_LIST
     src/*.cpp
 )
 
-add_executable(file_batch ${SOURCES_LIST})
+add_executable(file_batch WIN32 ${SOURCES_LIST})
 
 find_package(Qt5 COMPONENTS Widgets Concurrent AxContainer REQUIRED)
 find_package(everything_sdk REQUIRED)
