@@ -1,5 +1,7 @@
 #include "IFileProcessor.h"
 
+#include <Windows.h>
+
 #include <QAxObject>
 #include <QDebug>
 
@@ -16,6 +18,8 @@ namespace
 
         bool replace(const QString &file, const QString &match, const QString &replace) override
         {
+            CoInitializeEx(NULL, COINIT_MULTITHREADED);
+            
             QAxObject word = QAxObject("Word.Application");
 
             word.setProperty("Visible", false);
@@ -70,6 +74,8 @@ namespace
 
         bool replace(const QString &file, const QString &match, const QString &replace) override
         {
+            CoInitializeEx(NULL, COINIT_MULTITHREADED);
+            
             QAxObject excel = QAxObject("Excel.Application");
             excel.setProperty("Visible", false);
 
